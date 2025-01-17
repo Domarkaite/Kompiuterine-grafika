@@ -1,0 +1,151 @@
+
+<html lang="en">
+    <head>
+        <title>Procedural texture</title>
+        <meta charset="utf-8">
+</head>
+    
+    <body>
+        <div id="container"></div>
+    </body>
+    
+    <script src="libs/three.min.js"></script>
+    <script src="libs/TrackballControls.js"></script>
+    <script src="libs/dat.gui.js"></script>
+    
+    <script type="x-shader/x-vertex" id="vertexShader">
+
+    precision mediump float;
+
+    uniform float uScale;
+    uniform float uEdge;
+    varying vec2 vUv;
+    
+    
+    void main(void) {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0 );
+    }
+    </script>
+    
+    <script type="x-shader/x-vertex" id="fragmentShader">
+        
+    precision mediump float;	
+    
+    uniform float uScale;
+    uniform float uEdge;
+    varying vec2 vUv;
+
+    #extension GL_OES_standard_derivatives : enable
+    
+    void main() {
+
+        // Main colors
+        vec3 yellow = vec3(1.0, 1.0, 0.0);
+        vec3 blue = vec3(0.0, 0.0, 1.0);
+    
+        // UV coordinates
+        float u = vUv.x * uScale;
+        float v = vUv.y * uScale;
+    
+        u = fract(u) - 0.5;
+        v = fract(v) - 0.5;
+    
+        vec2 circleCenter = vec2(0.0, 0.0); // Center of the circle
+        vec2 circleCenter2 = vec2(-0.25, -0.25);
+        float circleRadius = 0.5;
+        float dist = length(vec2(u, v) - circleCenter);
+        float dist2 = length(vec2(u, v) - circleCenter2);
+
+
+        float t = (u * u) + (v * v) - 0.5*0.5;
+        float tC = (u+0.25)*(u+0.25) + (v+0.25)*(v+0.25) - 0.12*0.12;
+        float f = u * v * (u + v) * t * tC;
+    
+    
+        // Calculate edges
+        float grad = length(vec2(dFdx(f), dFdy(f)));
+        float d = uEdge * grad;
+        float edgeFactor = smoothstep(-d, d, f);
+    
+        // Final color blending
+        vec3 baseColor = mix(blue, yellow, edgeFactor);
+
+        gl_FragColor = vec4(baseColor, 1.0);
+    }
+    </script>
+    
+    <script type="text/javascript" id="mainCode">
+    
+    var
+    control,    
+    container, 
+    renderer, 
+    scene, 
+    camera, 
+    mesh, 
+    start = Date.now(),
+    fov = 30;
+    
+window.addEventListener( 'load', function() {
+    
+    container = document.getElementById( "container" );
+        
+    scene = new THREE.Scene();
+    
+    camera = new THREE.PerspectiveCamera( 
+        fov, 
+        window.innerWidth / window.innerHeight, 
+        1, 
+        10000 );
+    camera.position.z = 100;
+    camera.target = new THREE.Vector3( 0, 0, 0 );
+    
+    scene.add( camera );
+        
+    material = new THREE.ShaderMaterial( {
+        uniforms: { 
+            uScale: {type: 'f', value: 8.0},
+            uEdge: {type: 'f', value:  0.0} 
+        },
+        vertexShader: document.getElementById( 'vertexShader' ).textContent,
+        fragmentShader: document.getElementById( 'fragmentShader' ).textContent  
+    } );
+        
+    var geo = new THREE.PlaneGeometry(30, 30, 20, 20);    
+    mesh = new THREE.Mesh(geo, material); 
+    
+    scene.add( mesh );
+
+    
+    // MENU    
+    control = new function() {
+        this.scale = 1.0;
+        this.edge = 0.0;
+    }
+    var gui = new dat.GUI();
+    gui.add(control, 'scale', 1.0, 10.0);    
+    gui.add(control, 'edge', 0.0, 5.0);    
+
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+        
+    container.appendChild( renderer.domElement );
+    controls = new THREE.TrackballControls( camera, renderer.domElement );     
+    render();
+    
+} );
+    
+function render() {
+    // Update uniform
+    material.uniforms.uScale.value = control.scale; 
+    material.uniforms.uEdge.value = control.edge; 
+    // render
+    renderer.render( scene, camera );
+    requestAnimationFrame( render );
+    controls.update(); 
+}
+
+    </script>
+    
+</html>

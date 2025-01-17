@@ -1,0 +1,98 @@
+<html>
+<head>
+    <script type="application/javascript">
+        var ctx; 
+        var toColour;
+
+        function draw(step) {
+            var canvas = document.getElementById('canvas');
+            if (canvas.getContext) {
+                ctx = canvas.getContext("2d");
+                ctx.clearRect(0, 0, canvas.width, canvas.height); 
+                ctx.save();
+            
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(500, 0);
+                ctx.lineTo(500, 500);
+                ctx.lineTo(0, 500);
+                ctx.closePath();
+                ctx.stroke();
+                
+                toColour = step - 1;
+                drawF(step);
+                ctx.restore();
+            }
+        }
+
+        function drawF(step) {
+            if (step > 0) {
+                step = step - 1;
+                ctx.save();
+
+                if (toColour === step) {
+                    ctx.fillStyle = "red";
+                }
+                ctx.transform(0.25, 0, 0, 0.25, 125, 0);
+                drawF(step);
+                ctx.restore(); 
+                ctx.save(); 
+                
+                if (toColour === step) {
+                    ctx.fillStyle = "blue";
+                }
+                ctx.transform(-0.5, 0, 0, 0.5, 500, 0);
+
+                drawF(step);
+                ctx.restore();
+                ctx.save();
+                
+                if (toColour === step) {
+                    ctx.fillStyle = "cyan";
+                }
+                ctx.transform(0, -0.5, -0.5, 0, 500, 500); 
+
+                drawF(step);
+                ctx.restore();
+
+                if (toColour === step) {
+                    ctx.fillStyle = "magenta";
+                }
+                ctx.transform(0, -0.5, 0.5, 0, 0, 500);
+                drawF(step);
+                ctx.restore();
+                ctx.save();
+
+            } else {
+                drawT();
+            }
+            
+        }
+
+        function drawT() {
+            ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(250, 0);
+                ctx.lineTo(250, 400);
+                ctx.lineTo(500, 400);
+                ctx.lineTo(500, 500);
+                ctx.lineTo(0, 500);
+                ctx.lineTo(0, 0);
+                ctx.closePath();
+                ctx.fill();
+        }
+
+        function updateStep(value) {
+            document.getElementById('stepValue').innerHTML = value;
+            draw(parseInt(value));
+        }
+    </script>
+</head>
+<body onLoad="draw(1);">
+    <h1></h1>
+    <canvas id="canvas" width="500" height="500"></canvas>
+    
+    <p>Choose step: <span id="stepValue">1</span></p>
+    <input type="range" min="1" max="7" value="1" id="stepSlider" oninput="updateStep(this.value)">
+</body>
+</html>
