@@ -40,11 +40,9 @@
     
     void main() {
 
-        // Main colors
         vec3 yellow = vec3(1.0, 1.0, 0.0);
         vec3 blue = vec3(0.0, 0.0, 1.0);
     
-        // UV coordinates
         float u = vUv.x * uScale;
         float v = vUv.y * uScale;
     
@@ -62,13 +60,10 @@
         float tC = (u+0.25)*(u+0.25) + (v+0.25)*(v+0.25) - 0.12*0.12;
         float f = u * v * (u + v) * t * tC;
     
-    
-        // Calculate edges
         float grad = length(vec2(dFdx(f), dFdy(f)));
         float d = uEdge * grad;
         float edgeFactor = smoothstep(-d, d, f);
     
-        // Final color blending
         vec3 baseColor = mix(blue, yellow, edgeFactor);
 
         gl_FragColor = vec4(baseColor, 1.0);
@@ -117,8 +112,6 @@ window.addEventListener( 'load', function() {
     
     scene.add( mesh );
 
-    
-    // MENU    
     control = new function() {
         this.scale = 1.0;
         this.edge = 0.0;
@@ -137,10 +130,9 @@ window.addEventListener( 'load', function() {
 } );
     
 function render() {
-    // Update uniform
+
     material.uniforms.uScale.value = control.scale; 
     material.uniforms.uEdge.value = control.edge; 
-    // render
     renderer.render( scene, camera );
     requestAnimationFrame( render );
     controls.update(); 
