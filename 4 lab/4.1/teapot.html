@@ -56,7 +56,6 @@
     
         #extension GL_OES_standard_derivatives : enable
     
-            // Main colors
             vec3 yellow = vec3(1.0, 1.0, 0.0);
             vec3 blue = vec3(0.0, 0.0, 1.0);
         
@@ -84,7 +83,6 @@
             float d = uEdge * grad;
             float edgeFactor = smoothstep(-d, d, f);
         
-            // Final color blending
             vec3 finalColor = mix(blue, yellow, edgeFactor);
 
         if (vPosition.y >= -1.0 && vPosition.y <= 4.0 && 
@@ -143,12 +141,10 @@ window.addEventListener( 'load', function() {
 	var teapotSize = 15; 
 	var segments = 10;
 	geo = new THREE.TeapotGeometry(teapotSize, segments, true, true, true, true, true);
-	//size, segments, bottom, lid, body, fitLid, blinn
 	mesh = new THREE.Mesh(geo, material); 
 	scene.add( mesh );
 
 
-// MENU    
     control = new function() {
         this.x = 0.5;
         this.y = 0.5;
@@ -173,15 +169,12 @@ window.addEventListener( 'load', function() {
 } );
  
 function render() {
-
-	// Update uniform
     material.uniforms.dx.value = control.x; 
     material.uniforms.dy.value = control.y; 
     material.uniforms.dz.value = control.z; 
     material.uniforms.uScale.value = control.scale; 
     material.uniforms.uEdge.value = control.edge; 
 
-    // render
     renderer.render( scene, camera );
     requestAnimationFrame( render );
     controls.update(); 
