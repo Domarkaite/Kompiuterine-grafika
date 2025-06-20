@@ -46,7 +46,7 @@ A real-time 3D chessboard rendered with [Three.js](https://threejs.org/), featur
 
 | Camera Angle 1 | Camera Angle 2 | Camera Angle 3 |
 |----------------|----------------|----------------|
-| ![](./3%20lab/3.2/1.gif) | ![](./3%20lab/3.2/2.gif) | ![](./3%20lab/3.2/3.gif) |
+| ![](./3%20lab/3.2/demo/1.gif) | ![](./3%20lab/3.2/demo/2.gif) | ![](./3%20lab/3.2/demo/3.gif) |
 
 > ⚠️ This part runs in a browser and uses JavaScript with Three.js.
 
